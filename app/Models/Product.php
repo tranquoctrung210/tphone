@@ -9,6 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name', 'description', 'stock', 'price', 'discount'
+    ];
+
     public function reviews()
     {
         return $this->hasMany('App\Models\Review');
