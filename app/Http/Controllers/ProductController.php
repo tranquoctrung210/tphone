@@ -8,12 +8,19 @@ use App\Http\Resources\Product\DetailProductResource;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Exceptions\NoPermissionToDo;
 class ProductController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:api')->except('index', 'show');
+    }
+
+    public function checkRoleUser()
+    {
+        if (auth('api')->user()->role_id !== 1) { //check is admin
+            throw new NoPermissionToDo;
+        }
     }
     /**
      * Display a listing of the resource.
@@ -43,6 +50,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        $this->checkRoleUser();
         $product = new Product;
         $product->name = $request->name;
         $product->description = $request->description;
@@ -87,6 +95,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->checkRoleUser();
         $product->update($request->all());
         return response([
             'data' => new DetailProductResource($product)
@@ -100,7 +109,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($product)
-    {   
+    {
+        $this->checkRoleUser();
         $item = Product::findOrFail($product);
         $item->delete();
         return response(null, Response::HTTP_NO_CONTENT);
