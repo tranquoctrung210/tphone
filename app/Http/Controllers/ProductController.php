@@ -87,7 +87,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // dd($request->all());
         $product->update($request->all());
         return response([
             'data' => new DetailProductResource($product)
@@ -100,9 +99,10 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
-    {
-        $product->delete();
+    public function destroy($product)
+    {   
+        $item = Product::findOrFail($product);
+        $item->delete();
         return response(null, Response::HTTP_NO_CONTENT);
     }
 }

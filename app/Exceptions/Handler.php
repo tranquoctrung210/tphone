@@ -10,6 +10,7 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ExceptionTrait;
     /**
      * A list of the exception types that are not reported.
      *
@@ -39,9 +40,7 @@ class Handler extends ExceptionHandler
     {
         $this->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->expectsJson()) {
-                return response()->json([
-                    'errors' => 'Not found',
-                ], Response::HTTP_NOT_FOUND);
+                return $this->apiException($request, $e);
             }
         });
     }
